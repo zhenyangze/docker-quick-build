@@ -16,43 +16,55 @@ chmod a+x start.sh
 ```
 4. docker容器尽量把环境和数据独立开。
 
+## 依赖
+```shell
+nginx----> php----> wwwroot(数据卷)
+            |
+            mysql_data ----> mysql_server(数据卷)
+```
 ## 操作流程
 1. 安装mysql_data数据卷
 ```shell
-➜  docker  ./start.sh   #执行入口文件
-1) mysql_data/    3) nginx/     5) wwwroot/
-2) mysql_server/  4) php/       6) exit
-#? 1    #这里先择1，回车
-1) run
-2) up
-3) exit
-#? 1 #选择1，回车
-# 进入安装环节，如果没有对应的镜像文件，则会花时间下载
+	➜  docker  ./start.sh   #执行入口文件
+	1) mysql_data/    3) nginx/     5) wwwroot/
+	2) mysql_server/  4) php/       6) exit
+	#? 1    #这里先择1，回车
+	1) run
+	2) up
+	3) exit
+	#? 1 #选择1，回车
+	# 进入安装环节，如果没有对应的镜像文件，则会花时间下载
 ```
+
 2. 安装mysql_service
-**没有创建镜像文件则先Build**
+没有创建镜像文件则先**build**
 ```shell
 ➜  docker  ./start.sh
-1) mysql_data/    3) nginx/     5) wwwroot/
-2) mysql_server/  4) php/       6) exit
-#? 2
-1) build
-2) run
-3) up
-4) exit
-#? 1 # 选择1 执行build
+	1) mysql_data/    3) nginx/     5) wwwroot/
+	2) mysql_server/  4) php/       6) exit
+	#? 2
+	1) build
+	2) run
+	3) up
+	4) exit
+	#? 1 # 选择1 执行build
 ```
-**若已存在，则选择2，执行run方法**
+若已存在镜像，则选择2，执行**run**方法
 > 镜像查看命令 `docer images`
 > 容器查看命令 `docker ps -a`
 > 下面操作跟此类似
 
 3. 安装wwwroot数据卷
 > 选择run 方法
+
 4. 安装php环境
 > 先Build,再run
 > Dockerfiler可个性修改
+
 5. 安装nginx环境
+> 先build,再run
+
 6. 测试
-> win,unix可直接访问localhost测试。 
+> win,unix可直接访问localhost测试.
+> 如果localhost不能访问，可以通过docker inspect --format='{{.NetworkSettings.IPAddress}}' $CONTAINER_ID > 获取ip,其中$CONTAINER_ID表示你的容器的id,主要是针对nginx容器，因为我们访问网站，第一层需要经过nginx层.
 > mac上查看有些特殊，需要先通过 `docker-machine ip [defalut]` 获取容器ip,再用容器Ip访问
